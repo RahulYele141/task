@@ -1,0 +1,15 @@
+.tasks {
+  font-weight: bold;
+  align-items: center;
+  display: block;
+  justify-content: center;
+  margin: 10px 0 10px 0;
+}
+
+.subtask {
+  font-weight: 500;
+  align-items: center;
+  display: block;
+  justify-content: center;
+  margin: 5px 0 5px 0;
+}
