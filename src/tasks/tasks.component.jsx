@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import "./tasks.style.css";
+
 const tasks = [
   {
     task: "Clean bedroom",
@@ -15,47 +16,68 @@ const tasks = [
     subtasks: ["Choose tech stack", "Design pages", "Develop", "Publish"],
   },
 ];
+
 const Tasks = () => {
   const [completed, setCompleted] = useState(false);
+  const [subtaskCompleted, setSubtaskCompleted] = useState(false);
 
   useEffect(() => {
+    console.log("inside effect");
     tasks.map((item) => {
       item.completed = false;
       item.subtasks = item.subtasks.map((st) => {
         return { subtask: st, completed: false };
       });
-      return tasks;
     });
   }, []);
 
-  console.log(tasks);
-
-  const onClickHandler = (item, index) => {
-    console.log(item[index]);
-
-    const taskR = item.map((sb, ind) => {
+  const taskCompleted = (tasks, index) => {
+    console.log(tasks);
+    tasks.map((item, ind) => {
       if (ind === index) {
-        console.log(ind, index);
+        item.completed = true;
+        setCompleted(!completed);
       }
+      return item;
     });
-    console.log(taskR);
+  };
+
+  const subTaskCompleted = (tasks, index) => {
+    console.log(tasks);
+    tasks.map((item, ind) => {
+      if (ind === index) {
+        item.completed = true;
+        console.log(item);
+        setSubtaskCompleted(!completed);
+      }
+      return item;
+    });
   };
 
   return (
     <div>
-      <button onClick={onClickHandler}>Clear completed tasks</button>
+      {console.log("UI is rendered")}
+      <button>Clear completed tasks</button>
       {tasks.map((item, index) => (
-        <div onClick={() => {}} key={index} className='tasks'>
-          <div>{item.task}:</div>
+        <div key={index} className='tasks'>
+          <div
+            onClick={() => {
+              taskCompleted(tasks, index);
+            }}
+            className={`${item.completed ? "task-completed " : ""}`}>
+            {item.task}:
+          </div>
           <div>
             {item.subtasks.map((subtask, ind) => (
               <div
-                onClick={() => {
-                  onClickHandler(subtask, index);
-                }}
                 key={ind}
-                className='subtask'>
-                {subtask}
+                onClick={() => {
+                  subTaskCompleted(item.subtasks, ind);
+                }}
+                className={`subtask ${
+                  subtask.completed ? "task-completed " : ""
+                }`}>
+                {subtask.subtask ? subtask.subtask : subtask}
               </div>
             ))}
           </div>
