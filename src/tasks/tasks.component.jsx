@@ -18,47 +18,90 @@ const tasks = [
 ];
 
 const Tasks = () => {
+  const [tasksModified, setTasksModified] = useState(tasks);
   const [completed, setCompleted] = useState(false);
   const [subtaskCompleted, setSubtaskCompleted] = useState(false);
 
+  console.log(tasksModified);
   useEffect(() => {
-    console.log("inside effect");
     tasks.map((item) => {
       item.completed = false;
       item.subtasks = item.subtasks.map((st) => {
         return { subtask: st, completed: false };
       });
     });
+    console.log(tasks);
   }, []);
 
   const taskCompleted = (tasks, index) => {
-    console.log(tasks);
     tasks.map((item, ind) => {
       if (ind === index) {
-        item.completed = true;
+        item.completed = !item.completed;
         setCompleted(!completed);
+        item.subtasks.map((st) => {
+          if (ind === index) {
+            const subtask = (st.completed = !st.completed);
+            setSubtaskCompleted(!subtaskCompleted);
+            return subtask;
+          }
+        });
       }
       return item;
     });
   };
 
-  const subTaskCompleted = (tasks, index) => {
-    console.log(tasks);
-    tasks.map((item, ind) => {
-      if (ind === index) {
-        item.completed = true;
-        console.log(item);
-        setSubtaskCompleted(!completed);
-      }
-      return item;
+  const subTaskCompleted = (task, index) => {
+    task.map((task) => {
+      const newst = task.subtasks.map((st, ind) => {
+        if (ind === index) {
+          st.completed = !st.completed;
+          setSubtaskCompleted(!subtaskCompleted);
+        }
+        return st.completed;
+      });
+      console.log(newst);
+      const check = newst.every((e) => e === true);
+      console.log("check", check);
+      if (check === true) return (task.completed = true);
+      return (task.completed = false);
     });
+  };
+
+  const removeTasks = (tasks) => {
+    const reset = tasksModified.map((task, index) => {
+      if ((task.completed = true)) {
+        console.log("true");
+        return index;
+      } else {
+        console.log("false");
+      }
+    });
+    console.log("reset", reset);
+    console.log(tasksModified);
+    /*const reset = tasks.map((task) => {
+      task.completed = false;
+      task.subtasks.map((st) => {
+        st.completed = false;
+        return true;
+      });
+      return true;
+    });
+    console.log("reset", reset);
+    const re = reset.every((e) => e === true);
+    console.log("re", re);
+    if (re === true) return setCompleted(false) || setSubtaskCompleted(false);
+    return setCompleted(true);*/
   };
 
   return (
-    <div>
-      {console.log("UI is rendered")}
-      <button>Clear completed tasks</button>
-      {tasks.map((item, index) => (
+    <div className='root'>
+      <button
+        onClick={() => {
+          removeTasks(tasks);
+        }}>
+        Clear completed tasks
+      </button>
+      {tasksModified.map((item, index) => (
         <div key={index} className='tasks'>
           <div
             onClick={() => {
@@ -72,10 +115,10 @@ const Tasks = () => {
               <div
                 key={ind}
                 onClick={() => {
-                  subTaskCompleted(item.subtasks, ind);
+                  subTaskCompleted([item], ind);
                 }}
                 className={`subtask ${
-                  subtask.completed ? "task-completed " : ""
+                  subtask.completed ? "task-completed" : ""
                 }`}>
                 {subtask.subtask ? subtask.subtask : subtask}
               </div>

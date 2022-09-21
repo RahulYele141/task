@@ -1,23 +1,33 @@
+.root {
+  display: block;
+  justify-content: space-between;
+  position: relative;
+  align-items: center;
+  height: 400px;
+  width: 400px;
+}
+
 .tasks {
   font-weight: bold;
-  align-items: center;
   display: block;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
   margin: 10px 0 10px 0;
 }
 
 .task-completed {
   text-decoration: line-through;
+  color: grey;
 }
 
 .subtask {
   font-weight: 500;
-  align-items: center;
   display: block;
-  justify-content: center;
-  margin: 5px 0 5px 0;
+  justify-content: space-between;
+  margin: 10px 0 10px 0;
 }
 
 .subtask-completed {
   text-decoration: line-through;
+  color: grey;
 }
