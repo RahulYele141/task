@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import "./tasks.style.css";
 
@@ -17,115 +17,112 @@ const tasks = [
   },
 ];
 
+const updatedTasks = tasks.map((item) => {
+  item.completed = false;
+  item.subtasks = item.subtasks.map((st) => {
+    return { subtask: st, completed: false };
+  });
+  return item;
+});
+
 const Tasks = () => {
-  const [tasksModified, setTasksModified] = useState(tasks);
-  const [completed, setCompleted] = useState(false);
-  const [subtaskCompleted, setSubtaskCompleted] = useState(false);
+  const [tasksList, setTasksList] = useState(updatedTasks);
 
-  console.log(tasksModified);
-  useEffect(() => {
-    tasks.map((item) => {
-      item.completed = false;
-      item.subtasks = item.subtasks.map((st) => {
-        return { subtask: st, completed: false };
-      });
-    });
-    console.log(tasks);
-  }, []);
-
-  const taskCompleted = (tasks, index) => {
-    tasks.map((item, ind) => {
+  const taskCompleted = (index) => {
+    const modifiedTasks = tasksList.map((item, ind) => {
       if (ind === index) {
         item.completed = !item.completed;
-        setCompleted(!completed);
-        item.subtasks.map((st) => {
-          if (ind === index) {
-            const subtask = (st.completed = !st.completed);
-            setSubtaskCompleted(!subtaskCompleted);
-            return subtask;
-          }
+        item.subtasks = item.subtasks.map((st) => {
+          st.completed = !st.completed;
+          return st;
         });
       }
+
       return item;
     });
+
+    setTasksList(modifiedTasks);
   };
 
-  const subTaskCompleted = (task, index) => {
-    task.map((task) => {
-      const newst = task.subtasks.map((st, ind) => {
-        if (ind === index) {
-          st.completed = !st.completed;
-          setSubtaskCompleted(!subtaskCompleted);
-        }
-        return st.completed;
-      });
-      console.log(newst);
-      const check = newst.every((e) => e === true);
-      console.log("check", check);
-      if (check === true) return (task.completed = true);
-      return (task.completed = false);
-    });
-  };
-
-  const removeTasks = (tasks) => {
-    const reset = tasksModified.map((task, index) => {
-      if ((task.completed = true)) {
-        console.log("true");
-        return index;
-      } else {
-        console.log("false");
+  const subTaskCompleted = (taskIndex, subtaskIndex) => {
+    const updated = tasksList.map((task, index) => {
+      if (index === taskIndex) {
+        const updatedSubtasks = task.subtasks.map((st, inx) => {
+          if (inx === subtaskIndex) {
+            st.completed = !st.completed;
+          }
+          return st;
+        });
+        task.subtasks = updatedSubtasks;
       }
+
+      task.completed =
+        task.subtasks.filter((tk) => tk?.completed === false)?.length > 0
+          ? false
+          : true;
+      return task;
     });
-    console.log("reset", reset);
-    console.log(tasksModified);
-    /*const reset = tasks.map((task) => {
-      task.completed = false;
-      task.subtasks.map((st) => {
-        st.completed = false;
-        return true;
-      });
-      return true;
+
+    setTasksList(updated);
+  };
+
+  // const addTask = (e) => {
+  //   console.log(e.target.id);
+  //   tasksList.push();
+  // };
+
+  const removeTasks = () => {
+    const filtered = tasksList.filter((tk) => tk.completed === false);
+
+    filtered.map((ft) => {
+      ft.subtasks = ft.subtasks.filter((tk) => tk.completed === false);
+      return ft;
     });
-    console.log("reset", reset);
-    const re = reset.every((e) => e === true);
-    console.log("re", re);
-    if (re === true) return setCompleted(false) || setSubtaskCompleted(false);
-    return setCompleted(true);*/
+
+    setTasksList(filtered);
   };
 
   return (
     <div className='root'>
       <button
         onClick={() => {
-          removeTasks(tasks);
+          removeTasks();
         }}>
         Clear completed tasks
       </button>
-      {tasksModified.map((item, index) => (
-        <div key={index} className='tasks'>
-          <div
-            onClick={() => {
-              taskCompleted(tasks, index);
-            }}
-            className={`${item.completed ? "task-completed " : ""}`}>
-            {item.task}:
+      <div className='centered'>
+        {tasksList.map((item, index) => (
+          <div key={index}>
+            <span
+              onClick={() => {
+                taskCompleted(index);
+              }}
+              className={`tasks ${item.completed ? "task-completed " : ""}`}>
+              {item.task}:
+            </span>
+            <div>
+              {item.subtasks.map((subtask, ind) => (
+                <span
+                  key={ind}
+                  onClick={() => {
+                    subTaskCompleted(index, ind);
+                  }}
+                  className={`subtask ${
+                    subtask.completed ? "task-completed" : ""
+                  }`}>
+                  {subtask.subtask}
+                </span>
+              ))}
+            </div>
           </div>
-          <div>
-            {item.subtasks.map((subtask, ind) => (
-              <div
-                key={ind}
-                onClick={() => {
-                  subTaskCompleted([item], ind);
-                }}
-                className={`subtask ${
-                  subtask.completed ? "task-completed" : ""
-                }`}>
-                {subtask.subtask ? subtask.subtask : subtask}
-              </div>
-            ))}
-          </div>
-        </div>
-      ))}
+        ))}
+        <span>
+          <input id='#tasks' placeholder='Add Task' /> <button>Add Task</button>
+          <br />
+          <input id='#subtasks' placeholder='Add Subtask' />{" "}
+          <button>Add Subtask</button>
+        </span>
+      </div>
     </div>
   );
 };
