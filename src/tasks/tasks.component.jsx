@@ -66,11 +66,6 @@ const Tasks = () => {
     setTasksList(updated);
   };
 
-  // const addTask = (e) => {
-  //   console.log(e.target.id);
-  //   tasksList.push();
-  // };
-
   const removeTasks = () => {
     const filtered = tasksList.filter((tk) => tk.completed === false);
 
@@ -116,12 +111,6 @@ const Tasks = () => {
             </div>
           </div>
         ))}
-        <span>
-          <input id='#tasks' placeholder='Add Task' /> <button>Add Task</button>
-          <br />
-          <input id='#subtasks' placeholder='Add Subtask' />{" "}
-          <button>Add Subtask</button>
-        </span>
       </div>
     </div>
   );
