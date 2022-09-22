@@ -109,6 +109,7 @@ const Tasks = () => {
   return (
     <div className='root'>
       <button
+        className='btn btn-outline-secondary'
         onClick={() => {
           removeTasks();
         }}>
@@ -116,15 +117,20 @@ const Tasks = () => {
       </button>
 
       <div className='centered'>
-        <div>
-          <input className='input-field' onChange={readTask} />
-        </div>
-        <button
-          onClick={() => {
-            addTask();
-          }}>
-          Add task
-        </button>
+        <span>
+          <input
+            className='input-field form-control'
+            onChange={readTask}
+            placeholder='Add a new task'
+          />
+          <button
+            className='btn btn-outline-primary'
+            onClick={() => {
+              addTask();
+            }}>
+            Add task
+          </button>
+        </span>
         {tasksList.map((item, index) => (
           <div key={index}>
             <div className='tasks'>
@@ -136,12 +142,13 @@ const Tasks = () => {
                 {item.task}
               </div>
               <input
-                className='input-field'
+                className='input-field form-control'
                 onChange={readSubtask}
                 key={index}
+                placeholder='Add a new subtask'
               />
               <div
-                className='add-task'
+                className='add-task '
                 type='button'
                 onClick={() => {
                   addSubtask(tasksList, index);
