@@ -79,21 +79,26 @@ const Tasks = () => {
   };
 
   const readTask = (e) => {
+    e.preventDefault();
     setNewTask(e.target.value);
   };
 
-  const readSubtask = (e) => {
-    setNewSubtask(e.target.value);
+  const readSubtask = (e, index) => {
+    const subtask1 = e.target.value;
+    console.log(subtask1);
+    setNewSubtask(subtask1);
   };
 
   const addTask = () => {
-    const newTasks = tasksList;
-    newTasks.push({
-      task: newTask,
-      subtasks: [],
-      completed: false,
-    });
-    setTasksList(newTasks);
+    setTasksList([
+      ...tasksList,
+      {
+        task: newTask,
+        subtasks: [],
+        completed: false,
+      },
+    ]);
+    setNewTask("");
   };
 
   const addSubtask = (tasks, index) => {
@@ -104,24 +109,18 @@ const Tasks = () => {
       return task;
     });
     setTasksList(newSubt);
+    setNewSubtask("");
   };
 
   return (
     <div className='root'>
-      <button
-        className='btn btn-outline-secondary'
-        onClick={() => {
-          removeTasks();
-        }}>
-        Clear completed tasks
-      </button>
-
       <div className='centered'>
         <span>
           <input
             className='input-field form-control'
             onChange={readTask}
             placeholder='Add a new task'
+            value={newTask}
           />
           <button
             className='btn btn-outline-primary'
@@ -142,10 +141,15 @@ const Tasks = () => {
                 {item.task}
               </div>
               <input
+                // name={index}
                 className='input-field form-control'
-                onChange={readSubtask}
+                onChange={(e) => {
+                  readSubtask(e, index);
+                }}
+                id={index}
                 key={index}
                 placeholder='Add a new subtask'
+                value={newSubtask}
               />
               <div
                 className='add-task '
@@ -173,6 +177,13 @@ const Tasks = () => {
           </div>
         ))}
       </div>
+      <button
+        className='btn btn-outline-secondary'
+        onClick={() => {
+          removeTasks();
+        }}>
+        Clear completed tasks
+      </button>
     </div>
   );
 };
