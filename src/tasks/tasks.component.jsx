@@ -27,20 +27,22 @@ const updatedTasks = tasks.map((item) => {
 
 const Tasks = () => {
   const [tasksList, setTasksList] = useState(updatedTasks);
+  const [newTask, setNewTask] = useState("");
+  const [newSubtask, setNewSubtask] = useState("");
 
   const taskCompleted = (index) => {
     const modifiedTasks = tasksList.map((item, ind) => {
       if (ind === index) {
         item.completed = !item.completed;
         item.subtasks = item.subtasks.map((st) => {
-          st.completed = !st.completed;
+          if (ind === index) {
+            st.completed = !st.completed;
+          }
           return st;
         });
       }
-
       return item;
     });
-
     setTasksList(modifiedTasks);
   };
 
@@ -73,8 +75,35 @@ const Tasks = () => {
       ft.subtasks = ft.subtasks.filter((tk) => tk.completed === false);
       return ft;
     });
-
     setTasksList(filtered);
+  };
+
+  const readTask = (e) => {
+    setNewTask(e.target.value);
+  };
+
+  const readSubtask = (e) => {
+    setNewSubtask(e.target.value);
+  };
+
+  const addTask = () => {
+    const newTasks = tasksList;
+    newTasks.push({
+      task: newTask,
+      subtasks: [],
+      completed: false,
+    });
+    setTasksList(newTasks);
+  };
+
+  const addSubtask = (tasks, index) => {
+    const newSubt = tasks.map((task, ind) => {
+      if (ind === index) {
+        task.subtasks.push({ subtask: newSubtask, completed: false });
+      }
+      return task;
+    });
+    setTasksList(newSubt);
   };
 
   return (
@@ -85,16 +114,41 @@ const Tasks = () => {
         }}>
         Clear completed tasks
       </button>
+
       <div className='centered'>
+        <div>
+          <input className='input-field' onChange={readTask} />
+        </div>
+        <button
+          onClick={() => {
+            addTask();
+          }}>
+          Add task
+        </button>
         {tasksList.map((item, index) => (
           <div key={index}>
-            <span
-              onClick={() => {
-                taskCompleted(index);
-              }}
-              className={`tasks ${item.completed ? "task-completed " : ""}`}>
-              {item.task}:
-            </span>
+            <div className='tasks'>
+              <div
+                onClick={() => {
+                  taskCompleted(index);
+                }}
+                className={` ${item.completed ? "task-completed " : ""}`}>
+                {item.task}
+              </div>
+              <input
+                className='input-field'
+                onChange={readSubtask}
+                key={index}
+              />
+              <div
+                className='add-task'
+                type='button'
+                onClick={() => {
+                  addSubtask(tasksList, index);
+                }}>
+                +
+              </div>
+            </div>
             <div>
               {item.subtasks.map((subtask, ind) => (
                 <span

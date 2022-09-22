@@ -1,11 +1,12 @@
 .centered {
   margin: auto;
-  width: 40%;
+  width: 60%;
   padding: 10px;
 }
 .tasks {
   font-weight: bold;
-  display: block;
+  display: grid;
+  grid-auto-flow: column;
   margin: 10px 0 10px 0;
 }
 
@@ -23,4 +24,17 @@
 .subtask-completed {
   text-decoration: line-through;
   color: grey;
+}
+
+.input-field {
+  width: 100px;
+  opacity: 100%;
+}
+
+.add-task {
+  border: none;
+  color: black;
+  font-size: 19px;
+  cursor: pointer;
+  background-color: #fff;
 }
