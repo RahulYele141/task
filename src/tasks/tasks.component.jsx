@@ -106,20 +106,8 @@ const Tasks = () => {
     setNewTask("");
   };
 
-  const addSubtask = (tasks, index) => {
-    const newSubt = tasks.map((task, ind) => {
-      if (ind === index) {
-        task.subtasks.push({ subtask: newSubtask.subtask, completed: false });
-      }
-      return task;
-    });
-    setTasksList(newSubt);
-    console.log(tasksList);
-    setNewSubtask("");
-  };
-
-  const updateTask = (tasks, index) => {
-    if (toggle === false) {
+  const addSubtask = (index) => {
+    /* if (tasksList && toggle === false) {
       console.log(tasks);
       setTasksList(
         tasks.map((item) => {
@@ -131,8 +119,20 @@ const Tasks = () => {
         })
       );
       setNewSubtask("");
-    }
-    console.log(toggle);
+      setIsEdit(null);
+     } */
+    setTasksList(
+      tasksList.map((task, ind) => {
+        if (ind === index) {
+          task.subtasks.push({ subtask: newSubtask.subtask, completed: false });
+        } else if (!toggle && task.id === isEdit) {
+          task.subtasks[index].subtask = newSubtask.subtask;
+          return task;
+        }
+        return task;
+      })
+    );
+    setNewSubtask("");
   };
 
   const editSubtask = (id, index) => {
@@ -191,7 +191,7 @@ const Tasks = () => {
                   className='add-task '
                   type='button'
                   onClick={() => {
-                    addSubtask(tasksList, index);
+                    addSubtask(index);
                   }}>
                   +
                 </div>
@@ -214,7 +214,7 @@ const Tasks = () => {
                   newSubtask.subtask === item.subtasks[ind].subtask ? (
                     <p
                       onClick={() => {
-                        updateTask(tasksList, ind);
+                        addSubtask(ind);
                       }}>
                       save
                     </p>
