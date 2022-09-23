@@ -6,14 +6,17 @@ const tasks = [
   {
     task: "Clean bedroom",
     subtasks: ["Do laundry", "Organize desk", "Wipe floors"],
+    id: "1663924572195",
   },
   {
     task: "Study",
     subtasks: ["Review chemistry", "Do a React coding challenge"],
+    id: "1663924572185",
   },
   {
     task: "Build website",
     subtasks: ["Choose tech stack", "Design pages", "Develop", "Publish"],
+    id: "1663924572175",
   },
 ];
 
@@ -28,7 +31,9 @@ const updatedTasks = tasks.map((item) => {
 const Tasks = () => {
   const [tasksList, setTasksList] = useState(updatedTasks);
   const [newTask, setNewTask] = useState("");
-  const [newSubtask, setNewSubtask] = useState("");
+  const [newSubtask, setNewSubtask] = useState({ parent: "", subtask: "" });
+  const [toggle, setToggle] = useState(true);
+  const [isEdit, setIsEdit] = useState(null);
 
   const taskCompleted = (index) => {
     const modifiedTasks = tasksList.map((item, ind) => {
@@ -83,10 +88,9 @@ const Tasks = () => {
     setNewTask(e.target.value);
   };
 
-  const readSubtask = (e, index) => {
-    const subtask1 = e.target.value;
-    console.log(subtask1);
-    setNewSubtask(subtask1);
+  const readSubtask = (e, parent) => {
+    e.preventDefault();
+    setNewSubtask({ parent: parent, subtask: e.target.value });
   };
 
   const addTask = () => {
@@ -96,6 +100,7 @@ const Tasks = () => {
         task: newTask,
         subtasks: [],
         completed: false,
+        id: new Date().getTime().toString(),
       },
     ]);
     setNewTask("");
@@ -104,12 +109,41 @@ const Tasks = () => {
   const addSubtask = (tasks, index) => {
     const newSubt = tasks.map((task, ind) => {
       if (ind === index) {
-        task.subtasks.push({ subtask: newSubtask, completed: false });
+        task.subtasks.push({ subtask: newSubtask.subtask, completed: false });
       }
       return task;
     });
     setTasksList(newSubt);
+    console.log(tasksList);
     setNewSubtask("");
+  };
+
+  const updateTask = (tasks, index) => {
+    if (toggle === false) {
+      console.log(tasks);
+      setTasksList(
+        tasks.map((item) => {
+          if (item.id === isEdit) {
+            item.subtasks[index].subtask = newSubtask.subtask;
+            return item;
+          }
+          return { ...item };
+        })
+      );
+      setNewSubtask("");
+    }
+    console.log(toggle);
+  };
+
+  const editSubtask = (id, index) => {
+    const newEditItem = tasksList.find((task) => task.id === id);
+    console.log(newEditItem);
+    setNewSubtask({
+      parent: newEditItem.task,
+      subtask: newEditItem.subtasks[index].subtask,
+    });
+    setIsEdit(id);
+    setToggle(false);
   };
 
   return (
@@ -141,36 +175,57 @@ const Tasks = () => {
                 {item.task}
               </div>
               <input
-                // name={index}
                 className='input-field form-control'
                 onChange={(e) => {
-                  readSubtask(e, index);
+                  readSubtask(e, item.task);
                 }}
                 id={index}
                 key={index}
                 placeholder='Add a new subtask'
-                value={newSubtask}
+                value={
+                  newSubtask.parent === item.task ? newSubtask.subtask : ""
+                }
               />
-              <div
-                className='add-task '
-                type='button'
-                onClick={() => {
-                  addSubtask(tasksList, index);
-                }}>
-                +
-              </div>
+              {
+                <div
+                  className='add-task '
+                  type='button'
+                  onClick={() => {
+                    addSubtask(tasksList, index);
+                  }}>
+                  +
+                </div>
+              }
             </div>
             <div>
               {item.subtasks.map((subtask, ind) => (
-                <span
-                  key={ind}
-                  onClick={() => {
-                    subTaskCompleted(index, ind);
-                  }}
-                  className={`subtask ${
-                    subtask.completed ? "task-completed" : ""
-                  }`}>
-                  {subtask.subtask}
+                <span key={ind}>
+                  <p
+                    key={ind}
+                    onClick={() => {
+                      subTaskCompleted(index, ind);
+                    }}
+                    className={`subtask ${
+                      subtask.completed ? "task-completed" : ""
+                    }`}>
+                    {subtask.subtask}
+                  </p>
+                  {toggle === false &&
+                  newSubtask.subtask === item.subtasks[ind].subtask ? (
+                    <p
+                      onClick={() => {
+                        updateTask(tasksList, ind);
+                      }}>
+                      save
+                    </p>
+                  ) : (
+                    <p
+                      onClick={() => {
+                        editSubtask(item.id, ind);
+                      }}>
+                      edit
+                    </p>
+                  )}
                 </span>
               ))}
             </div>
