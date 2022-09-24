@@ -107,32 +107,33 @@ const Tasks = () => {
   };
 
   const addSubtask = (index) => {
-    /* if (tasksList && toggle === false) {
-      console.log(tasks);
-      setTasksList(
-        tasks.map((item) => {
-          if (item.id === isEdit) {
-            item.subtasks[index].subtask = newSubtask.subtask;
-            return item;
-          }
-          return { ...item };
-        })
-      );
-      setNewSubtask("");
-      setIsEdit(null);
-     } */
+    console.log(index);
     setTasksList(
       tasksList.map((task, ind) => {
         if (ind === index) {
           task.subtasks.push({ subtask: newSubtask.subtask, completed: false });
-        } else if (!toggle && task.id === isEdit) {
-          task.subtasks[index].subtask = newSubtask.subtask;
+          console.log("log 1");
           return task;
         }
         return task;
       })
     );
     setNewSubtask("");
+  };
+
+  const updateTask = (index) => {
+    setTasksList(
+      tasksList.map((task) => {
+        if (!toggle && task.id === isEdit) {
+          task.subtasks[index].subtask = newSubtask.subtask;
+          console.log("log 2");
+          return task;
+        }
+        return task;
+      })
+    );
+    setNewSubtask("");
+    setToggle(true);
   };
 
   const editSubtask = (id, index) => {
@@ -210,11 +211,10 @@ const Tasks = () => {
                     }`}>
                     {subtask.subtask}
                   </p>
-                  {toggle === false &&
-                  newSubtask.subtask === item.subtasks[ind].subtask ? (
+                  {!toggle ? (
                     <p
                       onClick={() => {
-                        addSubtask(ind);
+                        updateTask(ind);
                       }}>
                       save
                     </p>
